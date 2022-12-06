@@ -29,18 +29,21 @@ $body.on("click", "#nav-submit-story", navSubmitStoryClick);
 function navFavoritesClick(evt) {
   console.debug("navFavoritesClick", evt);
   hidePageComponents();
-  putFavoritesListOnPage();
+  $favoritedStories.show();
+
 }
 
 $body.on("click", "#nav-favorites", navFavoritesClick);
 
 async function navMyStories(evt) {
   console.debug("navMyStories", evt);
+  console.debug("navMyStories", evt.target.id)
   hidePageComponents();
-  // putStoriesOnPage();  
+  // putMyStoriesOnPage();  
   // may have had a typo saying putUserStoriesOnPage(), this will not run the loop of putStoriesOnPage()
   $myStories.show();
-  $ownStories.show();
+  console.log("navMyStories-before putMyStoriesOnPage")
+  console.log(currentUser.ownStories)
   
 }
 
@@ -51,6 +54,7 @@ function navLoginClick(evt) {
   hidePageComponents();
   $loginForm.show();
   $signupForm.show();
+  
 }
 
 $navLogin.on("click", navLoginClick);
@@ -81,10 +85,11 @@ async function submitNewStory(evt) {
   const $story = generateStoryMarkup(story);
   $allStoriesList.prepend($story);
   $myStories.append($story);
-  // $myStories.hide();
+  
+  $myStories.hide();
   putStoriesOnPage(); //thsi should trigger a DOM reload, thats why this worked and not 
   // the noted line below
-  // $allStoriesList.show();
+  $allStoriesList.show();
 
 
 
@@ -124,7 +129,8 @@ function putUserStoriesOnPage () {
 
 function testingStarButton(evt){
   console.log("testingStarButton")
-  $(evt.target.id).removeClass("fa-regular")
-  $(evt.target.id).addClass("fa-solid")
-  //targe
+  console.log($(evt.target))
+  // $(evt.target.id).addClass("fa-solid")
 }
+
+$favoritedStories.on("click",".star", testingStarButton);

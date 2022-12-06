@@ -2,7 +2,7 @@
 
 // global to hold the User instance of the currently-logged-in user
 let currentUser;
-//Without having an equal sign, this is declaring a variable and it is allowed to happen without initializing
+//Without having an equals sign, this is declaring a variable and it is allowed to happen without initializing
 //when it is not equal to something, it is considered "undefined"
 /******************************************************************************
  * User login/signup/login
@@ -27,7 +27,6 @@ async function login(evt) {
   saveUserCredentialsInLocalStorage();
   updateUIOnUserLogin();
 }
-
 $loginForm.on("submit", login);
 
 /** Handle signup form submission. */
@@ -111,7 +110,8 @@ function saveUserCredentialsInLocalStorage() {
 function updateUIOnUserLogin() {
   console.debug("updateUIOnUserLogin");
 
-  $allStoriesList.show();
-
+  // $allStoriesList.show();
+  console.log("updating after Signin")
+  putMyStoriesOnPage()
   updateNavOnLogin();
 }
