@@ -112,6 +112,8 @@ function updateUIOnUserLogin() {
 
   // $allStoriesList.show();
   console.log("updating after Signin")
-  putMyStoriesOnPage()
+  putMyStoriesOnPage();
+  putStoriesOnPage();
+  $allStoriesList.show();
   updateNavOnLogin();
 }
