@@ -26,7 +26,7 @@ class Story {
   getHostName() {
     // UNIMPLEMENTED: complete this function!
 
-    return "hostname.com";
+    return new URL(this.url).host
   }
 }
 
@@ -67,6 +67,22 @@ class StoryList {
     return new StoryList(stories);
   }
 
+  static async getMyStories() {
+    // Note presence of `static` keyword: this indicates that getStories is
+    //  **not** an instance method. Rather, it is a method that is called on the
+    //  class directly. Why doesn't it make sense for getStories to be an
+    //  instance method?
+    // query the /stories endpoint (no auth required)
+    const response = await axios({
+      url: `${BASE_URL}/stories/currentName`,
+      method: "GET",
+      
+    });
+    // turn plain old story objects from API into instances of Story class
+    const stories = response.data.stories.map(story => new Story(story));
+    // build an instance of our own class using the new array of stories
+    return new StoryList(stories);
+  }
 
   /** Adds story data to API, makes a Story instance, adds it to story list.
    * - user - the current instance of User who will post the story
@@ -84,11 +100,46 @@ class StoryList {
 
     const story = new Story(response.data.story);
     this.stories.unshift(story);
-    user.ownStories.unshift(story);
-
+    console.log(user.ownStories)
+    user.ownStories.unshift(story);// testing a theory, maybe this was the wrong spot. I think I was trying to put this on the "my story submit link" instead of the my story html container section.
+    // user.$myStories.unshift(story);
+    console.log(user.ownStories);
     return story;
   }
+s
 
+static async addFav (user, { title, author, url }) {
+  const token = user.loginToken;
+  const response = await axios({
+    method: "POST",
+    url: `${BASE_URL}/users/currentName/favorites`,
+    data: { token, story: { title, author, url } },
+  });
+
+  const story = new Story(response.data.story);
+  this.stories.unshift(story);
+  console.log(user.favorites)
+  user.favorites.unshift(story);// testing a theory, maybe this was the wrong spot. I think I was trying to put t
+  // user.$myStories.unshift(story);
+  console.log(user.favorites);
+  return story;
+}
+static async getFav() {
+  // Note presence of `static` keyword: this indicates that getStories is
+  //  **not** an instance method. Rather, it is a method that is called on the
+  //  class directly. Why doesn't it make sense for getStories to be an
+  //  instance method?
+  // query the /stories endpoint (no auth required)
+  const response = await axios({
+    url: `${BASE_URL}/users/currentName/favorites`,
+    method: "GET",
+    
+  });
+  // turn plain old story objects from API into instances of Story class
+  const stories = response.data.stories.map(story => new Story(story));
+  // build an instance of our own class using the new array of stories
+  return new StoryList(stories);
+}
 }
 
 
@@ -175,6 +226,7 @@ class User {
       },
       response.data.token
     );
+    
   }
 
   /** When we already have credentials (token & username) for a user,
@@ -205,5 +257,22 @@ class User {
       console.error("loginViaStoredCredentials failed", err);
       return null;
     }
+  }
+  async addFavorite(story){
+    this.favorites.push(story);
+    await this._addOrRemoveFavorite("add", story)
+  }
+  async removeFavorite(story){
+    this.favorites=this.favorites.filter(s=>s.storyId !== story.storyId);
+    await this._addOrRemoveFavorite("remove", story)
+  }
+  async _addOrRemoveFavorite(newState, story){
+    const method = newState === "add" ? "POST" : "DELETE";
+    const token = this.loginToken;
+    await axios ({
+      url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+      method: method,
+      data: {token},
+    });
   }
 }

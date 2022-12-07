@@ -43,6 +43,7 @@ function hidePageComponents() {
     $submitForm,
     $userProfile,
     $myStories,
+    $favoritedStories,
   ];
   components.forEach(c => c.hide());
 }
@@ -55,8 +56,9 @@ async function start() {
   // "Remember logged-in user" and log in, if credentials in localStorage
   await checkForRememberedUser();
   await getAndShowStoriesOnStart();
+  // await getAndShowMyStoriesOnStart ();
 
-  // if we got a logged-in user
+  // if we got a logged-in user 
   if (currentUser) updateUIOnUserLogin();
 }
 
